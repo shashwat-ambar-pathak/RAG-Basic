@@ -1,43 +1,31 @@
 from dotenv import load_dotenv
-
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 
 load_dotenv()
 
-# -------------------------------
 # Configuration
-# -------------------------------
 PERSIST_DIRECTORY = "db/chroma_db"
 EMBEDDING_MODEL = "mxbai-embed-large"
 
-# -------------------------------
 # Load Embedding Model
-# -------------------------------
 embedding_model = OllamaEmbeddings(
     model=EMBEDDING_MODEL
 )
 
-# -------------------------------
 # Load Chroma Database
-# -------------------------------
 db = Chroma(
     persist_directory=PERSIST_DIRECTORY,
     embedding_function=embedding_model,
     collection_metadata={"hnsw:space": "cosine"},
 )
-
 print(f"Loaded {db._collection.count()} document chunks.")
 
-# -------------------------------
 # User Query
-# -------------------------------
 user_message = input("What's your query?: ")
 query = user_message
 
-# -------------------------------
 # Retriever
-# -------------------------------
 retriever = db.as_retriever(
     search_kwargs={"k": 5}
 )
@@ -52,19 +40,14 @@ retriever = db.as_retriever(
 #     }
 # )
 
-# -------------------------------
 # Retrieve Documents
-# -------------------------------
+
 relevant_docs = retriever.invoke(query)
 
-print("\n==============================")
-print("User Query")
-print("==============================")
-print(query)
 
-print("\n==============================")
+print("User Query")
+print(query)
 print("Retrieved Context")
-print("==============================")
 
 if not relevant_docs:
     print("No relevant documents found.")
